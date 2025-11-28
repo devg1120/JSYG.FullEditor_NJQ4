@@ -614,16 +614,16 @@ class Connector extends StdConstruct {
         const line = ShapeInfo.line(n1[1], n2[1]);
         var isc1 = Intersection.intersect(n1[0], line);
         var isc2 = Intersection.intersect(n2[0], line);
-        
+        /*
  if ( source == "dragend" ) {
- console.log("===== dragen")
-if (this.tb) {
-      var tb_ = this.node1.getAttributeNS(null, "transform") ;
+if (this.mtx) {
+	
+      var tb = this.node1.getAttributeNS(null, "transform") ;
 		   //console.log("tb", tb);
 
-       var tv_ = tb_.slice(7).slice(0,-1).split(' ');
+       var tv = tb_.slice(7).slice(0,-1).split(' ');
 
-       var tv = this.tb.slice(7).slice(0,-1).split(' ');
+       //var tv = this.tb.slice(7).slice(0,-1).split(' ');
        //tv[0] = 1;
        //tv[1] = 0;
        //tv[2] = 0;
@@ -632,16 +632,20 @@ if (this.tb) {
        //tv[5] = tv_[5];
        //this.node1.setAttributeNS(null, "transform","matrix(1 0 0 1 0 0)") ;
        this.node1.setAttributeNS(null, "transform","matrix("+ tv.join(" ")  +")") ;
+       
+      JSYG(this.node1).addMtx(this.mtx);
        this.editor.update();
 }
  }
- 
+ */
         if (n1[2] != 0) {
            if (this.node1.tagName == 'rect')  {
  
  if ( source == "dragging" ) {
       this.tb = this.node1.getAttributeNS(null, "transform") ;
+      this.mtx = JSYG(this.node1).getMtx();
 		   //console.log("tb", tb);
+
 
        var tv = this.tb.slice(7).slice(0,-1).split(' ');
        tv[0] = 1;
@@ -651,10 +655,11 @@ if (this.tb) {
        tv[4] = 0;
        tv[5] = 0;
        
-       this.node1.setAttributeNS(null, "transform","matrix(1 0 0 1 0 0)") ;
+       //this.node1.setAttributeNS(null, "transform","matrix(1 0 0 1 0 0)") ;
        //this.node1.setAttributeNS(null, "transform","matrix("+ tv.join(" ")  +")") ;
-       this.editor.update();
+       //this.editor.update();
  }
+ 
                isc1 = this.rotate_intersect_rect(n1[1], n2[1] , this.node1, n1[2], n1[3])
                //console.log(n1[2], "status", isc1.status)
 	    }
@@ -2266,6 +2271,11 @@ Drag.prototype = {
                 that.editor.box.displayShadow = false;
                 that.editor.trigger("dragstart", node, e);
                 that.trigger("dragstart", node, e);
+                if (node.connectors) {
+                    for( let i = 0; i < node.connectors.length ; i++ ) {
+                        node.connectors[i].updateConnection("dragstart"); //GUSA
+		    }
+                }
             },
             ondrag(e) {
 		    console.log("---------------------2");
@@ -2298,16 +2308,16 @@ Drag.prototype = {
                 that.editor.trigger("dragend", node, e);
                 that.editor.trigger("change", node, e);
                 that.trigger("dragend", node, e);
-            },
-            onend(e) {
-		    console.log("---------------------4");
-                that.editor.trigger("end", node, e);
-                that.trigger("end", node, e);
                 if (node.connectors) {
                     for( let i = 0; i < node.connectors.length ; i++ ) {
                         node.connectors[i].updateConnection("dragend"); //GUSA
 		    }
                 }
+            },
+            onend(e) {
+		    console.log("---------------------4");
+                that.editor.trigger("end", node, e);
+                that.trigger("end", node, e);
             },
             type: this.type,
             bounds: this.bounds,

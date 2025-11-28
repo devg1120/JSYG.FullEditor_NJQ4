@@ -312,10 +312,8 @@ export class Draggable extends StdConstruct {
                     jNode[0].classList.remove(that.className);
                 }
                 if (guides.ok) {
-
-		   guides.trigger('success',that.node,e);
-                    //const event = new CustomEvent("success", { detail: e });
-                    //that.node.dispatchEvent(event);
+                    const event = new CustomEvent("success", { detail: e });
+                    that.node.dispatchEvent(event);
                 } else if (guides.require) {
                     let to;
 
@@ -374,10 +372,10 @@ export class Draggable extends StdConstruct {
         doc[0].addEventListener("mousemove", mousemoveFct);
         doc[0].addEventListener("mouseup", remove);
 
-	            //this.trigger('start',this.node,e);
+	          //  this.trigger('start',this.node,e);
 
         //const event = new CustomEvent("start", { detail: e });
-        //this.node.dispatchEvent(event);
+        //that.node.dispatchEvent(event);
     }
 
     enable(opt) {
