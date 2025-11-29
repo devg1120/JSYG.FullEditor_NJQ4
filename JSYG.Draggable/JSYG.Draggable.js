@@ -374,7 +374,8 @@ export class Draggable extends StdConstruct {
         doc[0].addEventListener("mousemove", mousemoveFct);
         doc[0].addEventListener("mouseup", remove);
 
-	            //this.trigger('start',this.node,e);
+        //this.trigger("start", that.node, e);
+
 
         //const event = new CustomEvent("start", { detail: e });
         //this.node.dispatchEvent(event);

@@ -586,14 +586,9 @@ class Connector extends StdConstruct {
         return this.line;
     }
 
-    updateConnection_() {
-      //console.trace();
-      if (this.node1.tagName == 'rect'    && this.node2.tagName == 'rect'    )  this.connect_rect_rect();
-      if (this.node1.tagName == 'circle'  && this.node2.tagName == 'circle'  )  this.connect_circle_circle();
-      if (this.node1.tagName == 'ellipse' && this.node2.tagName == 'polygon' )  this.connect_ellipse_polygon();
-    }
 
-    updateConnection_not_rote() {
+    updateConnection(source) {
+       console.log("updateConnection", source);
 
         let n1 = this.get_center_point(this.node1) 
         let n2 = this.get_center_point(this.node2) 
@@ -606,7 +601,7 @@ class Connector extends StdConstruct {
         this.line.setAttributeNS(null, "y2", isc2.points[0].y);
 
     }
-    updateConnection(source) {
+    updateConnection_routate(source) {
        console.log("updateConnection", source);
 
         let n1 = this.get_center_point(this.node1) 
@@ -614,52 +609,9 @@ class Connector extends StdConstruct {
         const line = ShapeInfo.line(n1[1], n2[1]);
         var isc1 = Intersection.intersect(n1[0], line);
         var isc2 = Intersection.intersect(n2[0], line);
-        /*
- if ( source == "dragend" ) {
-if (this.mtx) {
-	
-      var tb = this.node1.getAttributeNS(null, "transform") ;
-		   //console.log("tb", tb);
 
-       var tv = tb_.slice(7).slice(0,-1).split(' ');
-
-       //var tv = this.tb.slice(7).slice(0,-1).split(' ');
-       //tv[0] = 1;
-       //tv[1] = 0;
-       //tv[2] = 0;
-       //tv[3] = 1;
-       //tv[4] = tv_[4];
-       //tv[5] = tv_[5];
-       //this.node1.setAttributeNS(null, "transform","matrix(1 0 0 1 0 0)") ;
-       this.node1.setAttributeNS(null, "transform","matrix("+ tv.join(" ")  +")") ;
-       
-      JSYG(this.node1).addMtx(this.mtx);
-       this.editor.update();
-}
- }
- */
         if (n1[2] != 0) {
            if (this.node1.tagName == 'rect')  {
- 
- if ( source == "dragging" ) {
-      this.tb = this.node1.getAttributeNS(null, "transform") ;
-      this.mtx = JSYG(this.node1).getMtx();
-		   //console.log("tb", tb);
-
-
-       var tv = this.tb.slice(7).slice(0,-1).split(' ');
-       tv[0] = 1;
-       tv[1] = 0;
-       tv[2] = 0;
-       tv[3] = 1;
-       tv[4] = 0;
-       tv[5] = 0;
-       
-       //this.node1.setAttributeNS(null, "transform","matrix(1 0 0 1 0 0)") ;
-       //this.node1.setAttributeNS(null, "transform","matrix("+ tv.join(" ")  +")") ;
-       //this.editor.update();
- }
- 
                isc1 = this.rotate_intersect_rect(n1[1], n2[1] , this.node1, n1[2], n1[3])
                //console.log(n1[2], "status", isc1.status)
 	    }
@@ -820,9 +772,13 @@ const result = Intersection.intersectEllipseLine(
             var w = parseFloat(node.getAttributeNS(null, "width"));
             var h = parseFloat(node.getAttributeNS(null, "height")) ;
             var t = node.getAttributeNS(null, "transform") ;
+            var r = 0;
+            var angle = 0;
+            if (t) {
             var tv = t.slice(7).slice(0,-1).split(' ');
-	    var r = Math.atan2(tv[1], tv[0]) * 180 / Math.PI 
-	    var angle = Math.atan2(tv[1], tv[0])  
+	     r = Math.atan2(tv[1], tv[0]) * 180 / Math.PI 
+	     angle = Math.atan2(tv[1], tv[0])  
+	    }
 
             var cx = x + (w / 2);
             var cy = y + (h / 2);
@@ -2253,6 +2209,7 @@ Drag.prototype = {
             eventWhich: 1,
             onstart(e) {
 		    console.log("---------------------0");
+
                 backup = {
                     ctrlsMainPoints: that.editor.ctrlsMainPoints.enabled,
                     ctrlsCtrlPoints: that.editor.ctrlsCtrlPoints.enabled,
@@ -2721,11 +2678,20 @@ Rotate.prototype = {
         this.enabled = false;
     },
     show(opt, _preventEvent) {
+
+        const node = this.editor._target;
+        /*
+         if (node.connectors)  {   //GUSA
+           if (node.connectors.length > 0)  {
+            return;
+           }
+	 }
+	*/ 
+        return;
+
         this.hide(true);
 
         if (opt) this.set(opt);
-
-        const node = this.editor._target;
 
         if (!node || (this.editor.isMultiSelection() && !this.multiple)) return this.hide();
 

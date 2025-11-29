@@ -39,8 +39,8 @@ export class Rotatable extends StdConstruct {
         const mtxInit = jNode.getMtx();
 
         const mtxScreenInit = (() => {
-            //let mtx = jNode.getMtx("screen");
-            let mtx = jNode.getMtx("page");
+            let mtx = jNode.getMtx("screen");
+            //let mtx = jNode.getMtx("page");
             if (!jNode.isSVG()) {
                 const dim = jNode.getDim("page");
                 mtx = new JSYG.Matrix().translate(dim.x, dim.y).multiply(mtx);
