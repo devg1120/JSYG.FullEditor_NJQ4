@@ -1714,7 +1714,7 @@ export default class FullEditor extends JSYG {
 
         target.remove();
 
-        this.trigger("remove", this, this.getDocument(), target);
+        //this.trigger("remove", this, this.getDocument(), target);
 
         this.triggerChange();
 
