@@ -40,11 +40,17 @@ export class Container extends JSYG {
     applyTransform() {
         const mtx = this.getMtx();
         const that = this;
-
+/*
         this.children().each(function () {
             const $this = new JSYG(this);
             $this.setMtx(mtx.multiply($this.getMtx(that)));
         });
+*/              
+        const c = this[0].children;    //GUSA
+        for ( let i = 0; i < c.length; i++) {
+            const $this = new JSYG(c[i]);
+            $this.setMtx(mtx.multiply($this.getMtx(that)));
+	}
 
         this.resetTransf();
 
