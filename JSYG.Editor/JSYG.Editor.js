@@ -872,7 +872,96 @@ const result = Intersection.intersectEllipseLine(
          return result;
  */
     }
+
+
     get_center_point(node) {
+        if (node.tagName == 'rect') {
+            //console.log(node.getParentElements());
+            //console.log("tempo y",  this._tempoContainer[0].getAttributeNS(null, "y"));
+
+            var x = parseFloat(node.getAttributeNS(null, "x"));
+            var y = parseFloat(node.getAttributeNS(null, "y"));
+            var w = parseFloat(node.getAttributeNS(null, "width"));
+            var h = parseFloat(node.getAttributeNS(null, "height")) ;
+            var t = node.getAttributeNS(null, "transform") ;
+            var r = 0;
+            var angle = 0;
+            if (t) {
+            var tv = t.slice(7).slice(0,-1).split(' ');
+	     r = Math.atan2(tv[1], tv[0]) * 180 / Math.PI 
+	     angle = Math.atan2(tv[1], tv[0])  
+	    }
+
+        let mtx = new JSYG(node).getMtx();
+       const svgNamespace = "http://www.w3.org/2000/svg";
+        let ci = document.createElementNS(svgNamespace, "circle");
+        let rc = document.createElementNS(svgNamespace, "rect");
+
+            var cx = x + (w / 2);
+            var cy = y + (h / 2);
+
+        ci.setAttributeNS(null, "cx", cx);
+        ci.setAttributeNS(null, "cy", cy);
+        ci.setAttributeNS(null, "r", "3");
+        ci.setAttributeNS(null, "fill", "green");
+        ci.setAttributeNS(null, "stroke", "black");
+        ci.setAttributeNS(null, "strok-width", "2");
+        node.parentNode.appendChild(ci);
+        new JSYG(ci).setMtx(mtx);
+/*
+        rc.setAttributeNS(null, "x", x);
+        rc.setAttributeNS(null, "y", y);
+        rc.setAttributeNS(null, "height", h);
+        rc.setAttributeNS(null, "width", w);
+        rc.setAttributeNS(null, "fill", "yellow");
+        rc.setAttributeNS(null, "stroke", "black");
+        rc.setAttributeNS(null, "strok-width", "2");
+        node.parentNode.appendChild(rc);
+        new JSYG(rc).setMtx(mtx);
+	*/
+            var cx_ = parseFloat(ci.getAttributeNS(null, "cx"));
+            var cy_ = parseFloat(ci.getAttributeNS(null, "cy"));
+        console.log("cx", cx, cx_);
+        console.log("cy", cy, cy_);
+
+            const rect = ShapeInfo.rectangle([x,y],[w,h]);
+            return [rect, [cx_, cy_], r, angle]
+	} else if (node.tagName == 'circle') {
+            var cx = parseFloat(node.getAttributeNS(null, "cx"));
+            var cy = parseFloat(node.getAttributeNS(null, "cy"));
+            var r  = parseFloat(node.getAttributeNS(null, "r"));
+            var t = node.getAttributeNS(null, "transform") ;
+            const circle = ShapeInfo.circle(cx,cy,r);
+            return [circle, [cx, cy],  0, 0]
+	} else if (node.tagName == 'ellipse') {
+            var cx = parseFloat(node.getAttributeNS(null, "cx"));
+            var cy = parseFloat(node.getAttributeNS(null, "cy"));
+            var rx = parseFloat(node.getAttributeNS(null, "rx"));
+            var ry = parseFloat(node.getAttributeNS(null, "ry"));
+            var t = node.getAttributeNS(null, "transform") ;
+            var tv = t.slice(7).slice(0,-1).split(' ');
+	    var r = Math.atan2(tv[1], tv[0]) * 180 / Math.PI 
+	    var angle = Math.atan2(tv[1], tv[0])  
+            const ellipse = ShapeInfo.ellipse([cx,cy],rx, ry);
+            return [ellipse, [cx, cy], r, angle]
+	} else if (node.tagName == 'polygon') {
+            var points_str = node.getAttributeNS(null, "points");
+            var t = node.getAttributeNS(null, "transform") ;
+            var list = points_str.split(' ');
+            let points_array = [];
+            for (let i = 0; i < list.length ;i =  i+2) {
+                      let point = [parseFloat(list[i]), parseFloat(list[i+1])]
+	    	  points_array.push(point);
+	    }
+            let center = this.polygon_center(points_array);
+            const polygon = ShapeInfo.polygon(points_array);
+            return [polygon, center, t]
+	} else  {
+            throw("connection node type", node.tagName)
+        }
+    }
+
+    get_center_point__(node) {
         if (node.tagName == 'rect') {
             //console.log(node.getParentElements());
             //console.log("tempo y",  this._tempoContainer[0].getAttributeNS(null, "y"));
