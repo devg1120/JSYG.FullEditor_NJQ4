@@ -128,6 +128,15 @@ window.addEventListener("DOMContentLoaded", function () {
         target.addEventListener(eventName, handler, false);
     }
 
+   selector = "#showCenter";
+    eventName = "click";
+    handler = () => {
+        svgEditor.showCenter();
+    };
+    target = document.querySelector(selector);
+    if (target) {
+        target.addEventListener(eventName, handler, false);
+    }
 
     selector = "#svgAttrSet";
     eventName = "click";

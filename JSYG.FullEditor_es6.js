@@ -1170,6 +1170,13 @@ export default class FullEditor extends JSYG {
         return this;
     }
 
+   showCenter() {
+	//   console.log(this.getDocument());
+        this.shapeEditor.showCenter(this.getDocument());
+
+        return this;
+    }
+
     target(value) {
         if (value == null) {
             if (this.textEditor.display) return this.textEditor.target();
