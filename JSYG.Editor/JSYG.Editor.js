@@ -696,22 +696,29 @@ class Connector extends StdConstruct {
     }
 
 
-    updateConnection_(source) {
+    updateConnection(source) {
        console.log("updateConnection", source);
 
         let n1 = this.get_center_point(this.node1) 
         let n2 = this.get_center_point(this.node2) 
         const line = ShapeInfo.line(n1[1], n2[1]);
+
+        new JSYG(this.node1).setMtx(n1[4]);
+
         var isc1 = Intersection.intersect(n1[0], line);
         var isc2 = Intersection.intersect(n2[0], line);
         this.line.setAttributeNS(null, "x1", isc1.points[0].x);
         this.line.setAttributeNS(null, "y1", isc1.points[0].y);
         this.line.setAttributeNS(null, "x2", isc2.points[0].x);
         this.line.setAttributeNS(null, "y2", isc2.points[0].y);
+        //this.line.setAttributeNS(null, "x1", n1[1][0]);
+        //this.line.setAttributeNS(null, "y1", n1[1][1]);
+        //this.line.setAttributeNS(null, "x2", n2[1][0]);
+        //this.line.setAttributeNS(null, "y2", n2[1][1]);
 
     }
     //updateConnection_routate(source) {
-    updateConnection(source) {
+    updateConnection__(source) {
        console.log("updateConnection", source);
 
         let n1 = this.get_center_point(this.node1) 
@@ -722,7 +729,7 @@ class Connector extends StdConstruct {
 
         if (n1[2] != 0) {
            if (this.node1.tagName == 'rect')  {
-               isc1 = this.rotate_intersect_rect(n1[1], n2[1] , this.node1, n1[2], n1[3])
+               isc1 = this.rotate_intersect_rect(n1[1], n2[1] , this.node1, n1[2], n1[3], n1[4])
                //console.log(n1[2], "status", isc1.status)
 	    }
            if (this.node1.tagName == 'ellipse')  {
@@ -754,7 +761,7 @@ class Connector extends StdConstruct {
     }
 
 
-    rotate_intersect_rect( line_point1, line_point2, rect_ , r, angle_) {
+    rotate_intersect_rect( line_point1, line_point2, rect_ , r, angle_, mtx) {
         
          const line = {
              p1: new Point2D(parseFloat(line_point1[0]), parseFloat(line_point1[1])),
@@ -919,13 +926,11 @@ const result = Intersection.intersectEllipseLine(
         node.parentNode.appendChild(rc);
         new JSYG(rc).setMtx(mtx);
 	*/
-            var cx_ = parseFloat(ci.getAttributeNS(null, "cx"));
-            var cy_ = parseFloat(ci.getAttributeNS(null, "cy"));
-        console.log("cx", cx, cx_);
-        console.log("cy", cy, cy_);
+         //   var cx_ = parseFloat(ci.getAttributeNS(null, "cx"));
+         //   var cy_ = parseFloat(ci.getAttributeNS(null, "cy"));
 
             const rect = ShapeInfo.rectangle([x,y],[w,h]);
-            return [rect, [cx_, cy_], r, angle]
+            return [rect, [cx, cy], r, angle, mtx]
 	} else if (node.tagName == 'circle') {
             var cx = parseFloat(node.getAttributeNS(null, "cx"));
             var cy = parseFloat(node.getAttributeNS(null, "cy"));
